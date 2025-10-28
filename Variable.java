@@ -11,9 +11,14 @@ public class Variable extends Unop {
     }
 
     @Override
-    public double eval(double[] values) {
-        return values[index];
+public double eval(double[] values) {
+    if (index < 0 || index >= values.length) {
+        System.err.println("Warning: Variable X" + index +
+                           " requested but only " + values.length + " value(s) provided.");
+        return 0.0; // safe fallback
     }
+    return values[index];
+}
 
     @Override
     public String toString() {
