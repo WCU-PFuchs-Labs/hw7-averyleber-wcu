@@ -1,29 +1,35 @@
+/*
+ * Code Author: Avery Leber
+ * 10/28/2025 CSC240
+ * Purpose: Encapsulates the Algebra Tree (Node) and implements a crossover() method.
+ */
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GPTree implements Collector {
-    private final Node root;
-    private ArrayList<Node> crossNodes = new ArrayList<>();
+    private Node root;
+    private ArrayList<Node> crossNodes;
 
     /*
-     *  @param node: The node to be collected
+     * Purpose: Stores nodes that have children.
      */
-     @Override
-     public void collect(Node node) {
-        //add node to crossNodes if it is not a leaf node
+    @Override
+    public void collect(Node node) {
         if (!node.isLeaf()) {
             crossNodes.add(node);
         }
-     }
 
-     // DO NOT EDIT code below for Homework 8. 
+    }
+
+       // DO NOT EDIT code below for Homework 8. 
     // If you are doing the challenge mentioned in 
     // the comments above the crossover method
     // then you should create a second crossover
     // method above this comment with a slightly 
     // different name that handles all types
     // of crossover.
-
+    
+    
     /**
      * This initializes the crossNodes field and
      * calls the root Node's traverse method on this
@@ -82,9 +88,15 @@ public class GPTree implements Collector {
         root = null; 
     }    
     
-    public GPTree(NodeFactory n, int maxDepth, Random rand) throws CloneNotSupportedException {
+    public GPTree(NodeFactory n, int maxDepth, Random rand)
+    {
+        try {
         root = n.getOperator(rand);
         root.addRandomKids(n, maxDepth, rand);
+        } catch (CloneNotSupportedException e) {
+            System.out.println(e);
+            root = null;
+        }
     }
     
     @Override
@@ -95,5 +107,5 @@ public class GPTree implements Collector {
     public double eval(double[] data) { 
         return root.eval(data); 
     }
-    
+
 }
