@@ -12,8 +12,8 @@ public class Divide extends Binop {
       */
     @Override
     public double eval(double left, double right) {
-        if (Double.isInfinite(left / right)) {
-            return 1.0;
+        if (Math.abs(right) < 0.0001) {
+            return 1.0; // Avoids infinity
         }
         
         return left / right;
