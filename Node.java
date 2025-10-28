@@ -1,6 +1,7 @@
 /**
- * Code Template Author: David G. Cooper
- * Purpose: A Binary Tree class for Arithmetic evaluation
+ * Code Author: Avery Leber
+ * CSC240 10/28/2025
+ * Purpose: Randomly generated expression trees of various sizes and shapes.
  */
 import java.util.Random;
 
@@ -27,29 +28,16 @@ public class Node implements Cloneable {
         this.operation = operation;
     }
     
-    public double eval(double[] values) {
-        if (operation instanceof Unop) {
-            Unop unop = (Unop) operation;
-            double leftVal = (left != null) ? left.eval(values) : 0.0;
-            return unop.eval(new double[]{leftVal});
-        } else if (operation instanceof Binop) {
-            Binop binop = (Binop) operation;              // <-- explicit cast
-            if (left == null || right == null) {
-                // Defensive fallback so evaluation never NPEs.
-                System.err.println("Warning: Incomplete Binop node at depth " + depth + " op=" + operation);
-                double l = (left != null) ? left.eval(values) : 0.0;
-                double r = (right != null) ? right.eval(values) : 0.0;
-                return binop.eval(l, r);
-            }
-            double leftVal = left.eval(values);
-            double rightVal = right.eval(values);
-            return binop.eval(leftVal, rightVal);
+    public double eval(double[] values) { //Changed method signature to double eval(double[] values)
+        if (operation instanceof Unop unop) {
+              return unop.eval(values);
+        } else if (operation instanceof Binop binop) {
+              return binop.eval(left.eval(values), right.eval(values));
         } else {
-            System.err.println("Error: operation is not a Unop or a Binop!");
-            return 0.0;
+              System.err.println("Error operation is not a Unop or a Binop!");
+              return 0.0;
         }
     }
-
 
     // Creates an exact copy of an object
     // Throws an exception of the object's class does not implement the Cloneable interface
@@ -114,67 +102,48 @@ public class Node implements Cloneable {
     }
 
     /*
-     * Purpose: Collect using preorder traversal.
+     * Purpose: Recursively gives nodes in the binary tree to the Collector interface to "collect" them.
+     * This allows the creation of potential binary nodes that will be held be GPTree.java to be randomly selected at "crossover" points.
      */
     public void traverse(Collector c) {
-        // Collect this:
         c.collect(this);
 
-        // Traverse left child:
-        if (left != null) {
+        if (this.left != null) {
             left.traverse(c);
         }
 
-        // Traverse right child:
-        if (right != null) {
+        if (this.right != null) {
             right.traverse(c);
         }
     }
 
     /*
-     * Purpose: Swap this left child node with trunk left child node:
+     * Purpose: Determine if a node has no children.
      */
-    public void swapLeft(Node trunk) {
-        if (this.left == null || trunk.left == null) {
-            return;
-        }
+    public boolean isLeaf() {
+        return (this.left == null && this.right == null);
+    }
 
+    
+    public void swapLeft(Node trunk) {
         Node temp = this.left;
         this.left = trunk.left;
         trunk.left = temp;
     }
 
-    /*
-     * Purpose: Swap this right child node with trunk right child node.
-     */
     public void swapRight(Node trunk) {
-        if (this.right == null || trunk.right == null) {
-            return;
-        }
-
         Node temp = this.right;
         this.right = trunk.right;
         trunk.right = temp;
-
     }
 
-    /*
-     * Purpose: Return 'true' if operation is a Unop
-     * 
-     * Context: Checks whether or not an item is a leaf node (a node with no children).
-     */
-    public boolean isLeaf() {
-        return (this.left == null && this.right == null);
-    }
 
     @Override
     public String toString() {
         if (operation instanceof Unop) {
             return operation.toString();
         } else if (operation instanceof Binop) {
-            String leftStr = (left != null) ? left.toString() : "null";
-            String rightStr = (right != null) ? right.toString() : "null";
-            return "(" + leftStr + " " + operation.toString() + " " + rightStr + ")";
+            return "(" + left.toString() + " " + operation.toString() + " " + right.toString() + ")";
         } else {
             return "Error: Operation is not a Unop or a Binop!";
         }
