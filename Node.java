@@ -31,7 +31,7 @@ public class Node implements Cloneable {
         if (operation instanceof Unop) {
             Unop unop = (Unop) operation;
             double leftVal = (left != null) ? left.eval(values) : 0.0;
-            return unop.eval(leftVal);
+            return unop.eval(new double[]{leftVal});
         } else if (operation instanceof Binop) {
             Binop binop = (Binop) operation;              // <-- explicit cast
             if (left == null || right == null) {
